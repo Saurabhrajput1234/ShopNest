@@ -40,7 +40,7 @@ const ActivationPage = () => {
             }}>
             {
                 error ? (
-                    <p className='text-red-800'>Your toke is expair </p>
+                    <p className='text-red-800'>Your token is expair </p>
                 ) : (
                     <p className='text-green-800'>Your Account has been created sucess fully!</p>
                 )

@@ -22,7 +22,7 @@ const ShopCreate = () => {
     const [visible, setVisible] = useState(false);
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         const config = { headers: { "Content-Type": "multipart/form-data" } };
         // meaning of uper line is that we are creating a new object with the name of config and the value of config is {headers:{'Content-Type':'multipart/form-data'}}  
