@@ -9,6 +9,7 @@ const { isAuthenticated, isSeller, isAdmin } = require("../middleware/auth");
 const { upload } = require("../multer");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const ErrorHandler = require("../utils/ErrorHandler");
+const cloudinary = require("cloudinary").v2;
 
 const sendShopToken = require("../utils/shopToken");
 
@@ -36,7 +37,7 @@ const result = await cloudinary.uploader.upload(req.file.path, {
   folder: "avatars",
 });
 
-// Use the Cloudinary URL directly
+
 const fileUrl = result.secure_url;
 
 const seller = {
