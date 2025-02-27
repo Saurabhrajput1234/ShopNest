@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useEffect } from "react";
-import { backend_url, server } from "../../server";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
@@ -13,6 +12,9 @@ const ENDPOINT = process.env.REACT_APP_ENDPOINT_SOCKET;
 console.log(ENDPOINT);
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
+const server = process.env.REACT_APP_ENDPOINT_API;
 const DashboardMessages = () => {
   const { seller } = useSelector((state) => state.seller);
   const [conversations, setConversations] = useState([]);

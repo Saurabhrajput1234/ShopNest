@@ -9,13 +9,16 @@ import {
     AiOutlineShoppingCart,
     AiOutlineStar,
 } from "react-icons/ai";
-import { backend_url } from "../../../server";
 import ProductDetailsCard from "../ProductDetailsCard/ProductDetailsCard.jsx";
 import { useDispatch, useSelector } from 'react-redux'
 import { addToWishlist, removeFromWishlist } from '../../../redux/actions/wishlist';
 import { addTocart } from '../../../redux/actions/cart';
 import { toast } from 'react-toastify';
 import Ratings from "../../Products/Ratings";
+
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
+
 
 const ProductCard = ({ data, isEvent }) => {
     const { wishlist } = useSelector((state) => state.wishlist);

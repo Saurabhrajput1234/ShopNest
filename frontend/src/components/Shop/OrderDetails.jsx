@@ -4,10 +4,13 @@ import { BsFillBagFill } from "react-icons/bs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { backend_url, server } from "../../server";
 import { getAllOrdersOfShop } from "../../redux/actions/order";
 import { useDispatch, useSelector } from "react-redux";
 
+
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
+const server = process.env.REACT_APP_ENDPOINT_API;
 const OrderDetails = () => {
   const { orders, isLoading } = useSelector((state) => state.order);
   const { seller } = useSelector((state) => state.seller);

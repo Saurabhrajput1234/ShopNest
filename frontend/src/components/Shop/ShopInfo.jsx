@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { getAllProductsShop } from "../../redux/actions/product";
-import { backend_url, server } from "../../server";
 import styles from "../../styles/styles";
 import Loader from "../Layout/Loader";
 
 
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 const ShopInfo = ({ isOwner }) => {
     const [data, setData] = useState({});

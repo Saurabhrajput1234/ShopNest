@@ -3,7 +3,6 @@ import Header from "../components/Layout/Header";
 import { useSelector } from "react-redux";
 import socketIO from "socket.io-client";
 import { format } from "timeago.js";
-import { backend_url, server } from "../server";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
@@ -13,6 +12,9 @@ const ENDPOINT = process.env.REACT_APP_ENDPOINT_SOCKET;
 console.log(ENDPOINT);
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
+const server = process.env.REACT_APP_ENDPOINT_API;
 const UserInbox = () => {
   const { user } = useSelector((state) => state.user);
   const [conversations, setConversations] = useState([]);

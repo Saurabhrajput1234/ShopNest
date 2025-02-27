@@ -7,8 +7,9 @@ import { AiOutlineHeart } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromWishlist } from "../../redux/actions/wishlist";
 import { addTocart } from "../../redux/actions/cart";
-import { backend_url } from "../../server";
 
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
 const Wishlist = ({ setOpenWishlist }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
   const dispatch = useDispatch();
