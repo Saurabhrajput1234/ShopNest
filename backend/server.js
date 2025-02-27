@@ -29,7 +29,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "https://shop-nest-xi.vercel.app",
+    origin: "https://shopnest-fawn.vercel.app",
     credentials: true,
   })
 );
