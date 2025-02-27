@@ -6,8 +6,10 @@ import { IoBagHandleOutline } from "react-icons/io5";
 import { HiOutlineMinus, HiPlus } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { backend_url } from "../../server";
 import { addTocart, removeFromCart } from "../../redux/actions/cart";
+
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
 
 const Cart = ({ setOpenCart }) => {
   const { cart } = useSelector((state) => state.cart);

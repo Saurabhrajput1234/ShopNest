@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
-import { backend_url } from "../../server";
 import styles from "../../styles/styles";
 import CountDown from "./CountDown";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addTocart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
+
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
+
 
 const EventCard = ({ active, data }) => {
   const { cart } = useSelector((state) => state.cart);

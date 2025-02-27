@@ -4,8 +4,11 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { CiMoneyBill } from "react-icons/ci";
 import { GrWorkshop } from "react-icons/gr";
-import { backend_url } from "../../server";
 import logo from '../../Assests/img/shopnest-bg2.png'
+
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
+
 
 const AdminHeader = () => {
   const { user } = useSelector((state) => state.user);
