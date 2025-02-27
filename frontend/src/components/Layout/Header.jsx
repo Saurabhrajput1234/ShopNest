@@ -17,6 +17,7 @@ import { backend_url } from "../../server";
 import Cart from "../cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
 import { RxCross1 } from "react-icons/rx";
+import logo from '../../Assests/img/shopnest-bg2.png'
 
 const Header = ({ activeHeading }) => {
   const { isSeller } = useSelector((state) => state.seller);
@@ -60,9 +61,9 @@ const Header = ({ activeHeading }) => {
         <div className="hidden 800px:h-[50px] 800px:my-[20px] 800px:flex items-center justify-between ">
           <div>
             <Link to="/">
-              <img
-                src="https://shopo.quomodothemes.website/assets/images/logo.svg"
-                alt=""
+              <img class="max-w-[191px] h-auto rounded-[6px] border border-black"
+                src={logo}
+                alt="logo"
               />
             </Link>
           </div>
@@ -123,7 +124,7 @@ const Header = ({ activeHeading }) => {
       <div
         className={`${
           active == true ? "shadow-sm fixed top-0 left-0 z-10" : null
-        } transition hidden 800px:flex items-center justify-between w-full bg-[#3321c8] h-[70px]`}
+        } transition hidden 800px:flex items-center justify-between w-full bg-[#2A292B] h-[70px]`}
       >
         <div
           className={`${styles.section} relative ${styles.noramlFlex} justify-between`}
@@ -233,10 +234,9 @@ const Header = ({ activeHeading }) => {
           </div>
           <div>
             <Link to="/">
-              <img
-                src="https://shopo.quomodothemes.website/assets/images/logo.svg"
-                alt=""
-                className="mt-3 cursor-pointer"
+              <img class="max-w-[137px] h-auto rounded-[6px] border mt-3 cursor-pointer border-black"
+                src={logo}
+                alt="logo"
               />
             </Link>
           </div>
