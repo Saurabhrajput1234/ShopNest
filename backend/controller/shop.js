@@ -14,7 +14,6 @@ const sendShopToken = require("../utils/shopToken");
 
 
 // create shop
-console.log("secrate",process.env.ACTIVATION_SECRET)
 router.post("/create-shop", upload.single("file"), async (req, res, next) => {
   try {
     const { email } = req.body;
@@ -32,18 +31,23 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
       return next(new ErrorHandler("User already exists", 400));
     }
 
-    const filename = req.file.filename;
-    const fileUrl = path.join(filename);
+   // Upload image to Cloudinary
+const result = await cloudinary.uploader.upload(req.file.path, {
+  folder: "avatars",
+});
 
-    const seller = {
-      name: req.body.name,
-      email: email,
-      password: req.body.password,
-      avatar: fileUrl,
-      address: req.body.address,
-      phoneNumber: req.body.phoneNumber,
-      zipCode: req.body.zipCode,
-    };
+// Use the Cloudinary URL directly
+const fileUrl = result.secure_url;
+
+const seller = {
+  name: req.body.name,
+  email: email,
+  password: req.body.password,
+  avatar: fileUrl, 
+  address: req.body.address,
+  phoneNumber: req.body.phoneNumber,
+  zipCode: req.body.zipCode,
+};
 
     const activationToken = createActivationToken(seller);
     console.log(activationToken);
