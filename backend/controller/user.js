@@ -31,14 +31,16 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
       return next(new ErrorHandler("User already exits", 400));
     }
 
-    const filename = req.file.filename;
-    const fileUrl = path.join(filename);
+    // Upload image to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "avatars",
+    });
 
     const user = {
-      name: name,
-      email: email,
-      password: password,
-      avatar: fileUrl,
+      name,
+      email,
+      password,
+      avatar: result.secure_url,
     };
 
     const activationToken = createActivationToken(user);
