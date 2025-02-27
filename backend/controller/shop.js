@@ -48,7 +48,7 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
     const activationToken = createActivationToken(seller);
     console.log(activationToken);
 
-    const activationUrl = `http://localhost:3000/seller/activation/${activationToken}`;
+    const activationUrl = `https://shopnest-fawn.vercel.app/seller/activation/${activationToken}`;
 
     try {
       await sendMail({
