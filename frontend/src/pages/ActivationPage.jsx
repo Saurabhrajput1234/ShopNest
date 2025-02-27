@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import { server } from "../server";
 import axios from 'axios';
 
 
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 const ActivationPage = () => {
     const { activation_token } = useParams();

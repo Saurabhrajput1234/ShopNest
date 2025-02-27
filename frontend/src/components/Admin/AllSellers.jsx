@@ -6,10 +6,12 @@ import { Button } from "@material-ui/core";
 import styles from "../../styles/styles";
 import { RxCross1 } from "react-icons/rx";
 import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 import { getAllSellers } from "../../redux/actions/sellers";
 import { Link } from "react-router-dom";
+
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 const AllSellers = () => {
   const dispatch = useDispatch();

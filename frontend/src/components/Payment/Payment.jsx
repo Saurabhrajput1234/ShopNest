@@ -11,10 +11,10 @@ import {
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 import { RxCross1 } from "react-icons/rx";
 
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 const Payment = () => {
     const [orderData, setOrderData] = useState([]);

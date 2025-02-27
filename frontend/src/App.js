@@ -60,10 +60,13 @@ import { ShopHomePage } from "./ShopRoutes";
 import { getAllProducts } from "./redux/actions/product";
 import { getAllEvents } from "./redux/actions/event";
 import axios from "axios";
-import { server } from "./server";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
+
+
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 const App = () => {
   const [stripeApikey, setStripeApiKey] = useState("");
 

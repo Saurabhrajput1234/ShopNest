@@ -1,12 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { server } from "../../server";
-import { Link } from "react-router-dom";
 import { DataGrid } from "@material-ui/data-grid";
 import { BsPencil } from "react-icons/bs";
 import { RxCross1 } from "react-icons/rx";
 import styles from "../../styles/styles";
 import { toast } from "react-toastify";
+
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 const AllWithdraw = () => {
   const [data, setData] = useState([]);

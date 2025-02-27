@@ -1,5 +1,7 @@
 import axios from "axios";
-import { server } from "../../server";
+
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 // create event
 export const createevent = (newForm) => async (dispatch) => {

@@ -11,9 +11,11 @@ import {
 } from "react-icons/md";
 import { TbAddressBook } from "react-icons/tb";
 import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 const ProfileSidebar = ({ active, setActive }) => {
   const navigate = useNavigate();

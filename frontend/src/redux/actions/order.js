@@ -1,5 +1,7 @@
 import axios from "axios";
-import { server } from "../../server";
+
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 // get all orders of user
 export const getAllOrdersOfUser = (userId) => async (dispatch) => {

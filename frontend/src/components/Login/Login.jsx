@@ -3,9 +3,10 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../../styles/styles";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
 
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 const Login = () => {
     const navigate = useNavigate()

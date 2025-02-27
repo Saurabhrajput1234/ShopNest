@@ -4,8 +4,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { AiOutlineEye } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { server } from "../../server";
 
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 const AllEvents = () => {
   const [events, setEvents] = useState([]);
   useEffect(() => {

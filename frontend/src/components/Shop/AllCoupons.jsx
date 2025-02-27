@@ -7,8 +7,10 @@ import { RxCross1 } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../../styles/styles";
 import Loader from "../Layout/Loader";
-import { server } from "../../server";
 import { toast } from "react-toastify";
+
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 const AllCoupons = () => {
     const [open, setOpen] = useState(false);

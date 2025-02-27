@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import axios from "axios";
-import { server } from "../../server";
 import { toast } from "react-toastify";
+
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 const Checkout = () => {
     const { user } = useSelector((state) => state.user);
