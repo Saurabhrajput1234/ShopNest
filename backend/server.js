@@ -29,7 +29,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://shop-nest-xi.vercel.app",
     credentials: true,
   })
 );
