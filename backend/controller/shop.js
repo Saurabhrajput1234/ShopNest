@@ -51,9 +51,9 @@ const seller = {
 };
 
     const activationToken = createActivationToken(seller);
-    console.log(activationToken);
+   
 
-    const activationUrl = `https://shopnest-fawn.vercel.app/seller/activation/${activationToken}`;
+    const activationUrl = `https://shopnest-fawn.vercel.app/activation/${activationToken}`;
 
     try {
       await sendMail({
