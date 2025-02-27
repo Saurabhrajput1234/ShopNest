@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { backend_url, server } from "../../server";
 import { useDispatch, useSelector } from 'react-redux';
 import {
     deleteUserAddress,
@@ -20,6 +19,9 @@ import { Country, State } from "country-state-city";
 import { getAllOrdersOfUser } from '../../redux/actions/order';
 
 
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
+const server = process.env.REACT_APP_ENDPOINT_API;
 const ProfileContent = ({ active }) => {
     const { user, error, successMessage } = useSelector((state) => state.user);
     const [name, setName] = useState(user && user.name);

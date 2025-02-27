@@ -13,11 +13,15 @@ import { CgProfile } from "react-icons/cg";
 import DropDown from "./DropDown";
 import Navbar from "./Navbar";
 import { useSelector } from "react-redux";
-import { backend_url } from "../../server";
+
 import Cart from "../cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
 import { RxCross1 } from "react-icons/rx";
 import logo from '../../Assests/img/shopnest-bg2.png'
+
+
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
 
 const Header = ({ activeHeading }) => {
   const { isSeller } = useSelector((state) => state.seller);

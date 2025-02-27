@@ -9,7 +9,6 @@ import {
 } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProductsShop } from "../../redux/actions/product";
-import { backend_url, server } from "../../server";
 import {
   addToWishlist,
   removeFromWishlist,
@@ -18,6 +17,9 @@ import { addTocart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 import Ratings from "./Ratings";
 import axios from "axios";
+
+const backend_url = process.env.REACT_APP_ENDPOINT;
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 const ProductDetails = ({ data }) => {
   const { products } = useSelector((state) => state.products);
