@@ -18,7 +18,7 @@ const eventSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    finish_Date: { // Renamed for consistency
+    Finish_Date: { 
       type: Date,
       required: true,
     },
