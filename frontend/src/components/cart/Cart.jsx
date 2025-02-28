@@ -1,173 +1,147 @@
-import React, { useState } from "react";
-import { RxCross1 } from "react-icons/rx";
-import styles from "../../styles/styles";
+import React, { useEffect, useState } from 'react'
 import { Link } from "react-router-dom";
-import { IoBagHandleOutline } from "react-icons/io5";
-import { HiOutlineMinus, HiPlus } from "react-icons/hi";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { addTocart, removeFromCart } from "../../redux/actions/cart";
-
+import styles from "../../../styles/styles";
+import {
+  AiFillHeart,
+  AiOutlineEye,
+  AiOutlineHeart,
+  AiOutlineShoppingCart,
+} from "react-icons/ai";
+import ProductDetailsCard from "../ProductDetailsCard/ProductDetailsCard.jsx";
+import { useDispatch, useSelector } from 'react-redux'
+import { addToWishlist, removeFromWishlist } from '../../../redux/actions/wishlist';
+import { addTocart } from '../../../redux/actions/cart';
+import { toast } from 'react-toastify';
+import Ratings from "../../Products/Ratings";
 
 const backend_url = process.env.REACT_APP_ENDPOINT;
 
-const Cart = ({ setOpenCart }) => {
+const ProductCard = ({ data, isEvent }) => {
+  const { wishlist } = useSelector((state) => state.wishlist);
   const { cart } = useSelector((state) => state.cart);
+  const [click, setClick] = useState(false);
+  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
 
-  //remove from cart
-  const removeFromCartHandler = (data) => {
-    dispatch(removeFromCart(data));
-  };
-
-  // Total price
-  const totalPrice = cart.reduce(
-    (acc, item) => acc + item.qty * item.discountPrice,
-    0
-  );
-
-  const quantityChangeHandler = (data) => {
-    dispatch(addTocart(data));
-  };
-
-  return (
-    <div className="fixed top-0 left-0 w-full bg-[#0000004b] h-screen z-10">
-      <div className="fixed top-0 right-0 h-full w-[80%] 800px:w-[25%] bg-white flex flex-col overflow-y-scroll justify-between shadow-sm">
-        {cart && cart.length === 0 ? (
-          <div className="w-full h-screen flex items-center justify-center">
-            <div className="flex w-full justify-end pt-5 pr-5 fixed top-3 right-3">
-              <RxCross1
-                size={25}
-                className="cursor-pointer"
-                onClick={() => setOpenCart(false)}
-              />
-            </div>
-            <h5>Cart items is empot!</h5>
-          </div>
-        ) : (
-          <>
-            <div>
-              <div className="flex w-full justify-end pt-5 pr-5 ">
-                <RxCross1
-                  size={25}
-                  className="cursor-pointer"
-                  onClick={() => setOpenCart(false)}
-                />
-              </div>
-              {/* item length */}
-              <div className={`${styles.noramlFlex} p-4`}>
-                <IoBagHandleOutline size={25} />
-                <h5 className="pl-2 text-[20px] font-[500]">
-                  {cart && cart.length} items
-                </h5>
-              </div>
-
-              {/* Cart Single item */}
-              <br />
-              <div className="w-full border-t">
-                {cart &&
-                  cart.map((i, index) => {
-                    return (
-                      <CartSingle
-                        data={i}
-                        key={index}
-                        quantityChangeHandler={quantityChangeHandler}
-                        removeFromCartHandler={removeFromCartHandler}
-                      />
-                    );
-                  })}
-              </div>
-            </div>
-
-            <div className="px-5 mb-3">
-              {/* Check out btn */}
-              <Link to="/checkout">
-                <div
-                  className={`h-[45px] flex items-center justify-center w-[100%] bg-[#e44343] rounded-[5px]`}
-                >
-                  <h1 className="text-[#fff] text-[18px] font-[600]">
-                    Checkout Now (USD${totalPrice})
-                  </h1>
-                </div>
-              </Link>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
-  const [value, setValue] = useState(data.qty);
-  const totalPrice = data.discountPrice * value;
-
-  const increment = (data) => {
-    if (data.stock < value) {
-      toast.error("Product stock limited!");
+  useEffect(() => {
+    if (wishlist && wishlist.find((i) => i._id === data._id)) {
+      setClick(true);
     } else {
-      setValue(value + 1);
-      /* The line `const updateCartData = { ...data, qty: value + 1 };` is creating a new object
-            `updateCartData` by spreading the properties of the `data` object and adding a new
-            property `qty` with the value of `value + 1`. This is typically used to update the
-            quantity of an item in the cart. */
-      const updateCartData = { ...data, qty: value + 1 };
-      quantityChangeHandler(updateCartData);
+      setClick(false);
     }
+  }, [wishlist, data]);
+
+  // Remove from wish list 
+  const removeFromWishlistHandler = (data) => {
+    setClick(!click);
+    dispatch(removeFromWishlist(data));
   };
 
-  // Decrement
-  const decrement = (data) => {
-    setValue(value === 1 ? 1 : value - 1);
-    const updateCartData = { ...data, qty: value === 1 ? 1 : value - 1 };
-    quantityChangeHandler(updateCartData);
+  // Add to wish list
+  const addToWishlistHandler = (data) => {
+    setClick(!click);
+    dispatch(addToWishlist(data));
+  };
+
+  // Add to cart
+  const addToCartHandler = (id) => {
+    const isItemExists = cart && cart.find((i) => i._id === id);
+
+    if (isItemExists) {
+      toast.error("Item already in cart!");
+    } else {
+      if (data.stock < 1) {
+        toast.error("Product stock limited!");
+      } else {
+        const cartData = { ...data, qty: 1 };
+        dispatch(addTocart(cartData));
+        toast.success("Item added to cart successfully!");
+      }
+    }
   };
 
   return (
     <>
-      <div className="border-b p-4">
-        <div className="w-full flex items-center">
-          <div>
-            <div
-              className={`bg-[#e44343] border border-[#e4434373] rounded-full w-[25px] h-[25px] ${styles.noramlFlex} justify-center cursor-pointer`}
-              onClick={() => increment(data)}
-            >
-              <HiPlus size={18} color="#fff" />
-            </div>
-            <span className="pl-[10px]">{data.qty}</span>
-            <div
-              className="bg-[#a7abb14f] rounded-full w-[25px] h-[25px] flex items-center justify-center cursor-pointer"
-              onClick={() => decrement(data)}
-            >
-              <HiOutlineMinus size={16} color="#7d879c" />
-            </div>
-          </div>
+      <div className='w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer'>
+        <div className='flex justify-end'></div>
+
+        <Link to={`${isEvent === true ? `/product/${data._id}?isEvent=true` : `/product/${data._id}`}`}>
           <img
-            src={`${data?.images[0]}`}
-            className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
-            alt="side card"
+            src={data?.images?.[0]?.url}
+            alt="Product"
+            className='w-full h-[170px] object-contain'
+          />
+        </Link>
+
+        <Link to={`${isEvent === true ? `/product/${data._id}?isEvent=true` : `/product/${data._id}`}`}>
+          <h5 className={`${styles.shop_name}`}>{data.shop.name}</h5>
+        </Link>
+
+        <Link to={`/product/${data._id}`}>
+          <h4 className='pb-3 font-[500]'>
+            {data.name.length > 40 ? data.name.slice(0, 40) + '...' : data.name}
+          </h4>
+          {/* Star Rating */}
+          <div className='flex'>
+            <Ratings rating={data?.ratings} />
+          </div>
+
+          <div className='py-2 flex items-center justify-between'>
+            <div className='flex'>
+              <h5 className={`${styles.productDiscountPrice}`}>
+                {data.originalPrice === 0 ? data.originalPrice : data.discountPrice}$
+              </h5>
+              <h4 className={`${styles.price}`}>
+                {data.originalPrice ? data.originalPrice + " $" : null}
+              </h4>
+            </div>
+            <span className="font-[400] text-[17px] text-[#68d284]">
+              {data?.sold_out} sold
+            </span>
+          </div>
+        </Link>
+
+        {/* Side options */}
+        <div>
+          {click ? (
+            <AiFillHeart
+              size={22}
+              className="cursor-pointer absolute right-2 top-5"
+              onClick={() => removeFromWishlistHandler(data)}
+              color="red"
+              title='Remove from wishlist'
+            />
+          ) : (
+            <AiOutlineHeart
+              size={22}
+              className="cursor-pointer absolute right-2 top-5"
+              onClick={() => addToWishlistHandler(data)}
+              color="#333"
+              title='Add to wishlist'
+            />
+          )}
+
+          <AiOutlineEye
+            size={22}
+            className="cursor-pointer absolute right-2 top-14"
+            onClick={() => setOpen(!open)}
+            color="#333"
+            title='Quick view'
           />
 
-          <div className="pl-[15px]">
-            <h1>{data.name}</h1>
-            <h4 className="font-[400] text-[15px] text-[#00000082]">
-              {" "}
-              ${data.discountPrice} * {value}
-            </h4>
-            <h4 className="font-[400] text-[17px] pt-[3px]  text-[#d02222] font-Roboto ">
-              US${totalPrice}
-            </h4>
-          </div>
-          <RxCross1
-            size={99}
-            color="#7d879c"
-            className="cursor-pointer"
-            onClick={() => removeFromCartHandler(data)}
+          <AiOutlineShoppingCart
+            size={25}
+            className="cursor-pointer absolute right-2 top-24"
+            onClick={() => addToCartHandler(data._id)}
+            color="#444"
+            title='Add to cart'
           />
+
+          {open ? <ProductDetailsCard setOpen={setOpen} data={data} /> : null}
         </div>
       </div>
     </>
   );
 };
 
-export default Cart;
+export default ProductCard;

@@ -7,9 +7,9 @@ const Order = require("../model/order");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { isSeller, isAdmin, isAuthenticated } = require("../middleware/auth");
 const router = express.Router();
-const fs = require("fs");
+const cloudinary = require("cloudinary").v2;
 
-// create event
+// Create event
 router.post(
   "/create-event",
   upload.array("images"),
@@ -21,17 +21,21 @@ router.post(
         return next(new ErrorHandler("Shop Id is invalid!", 400));
       } else {
         const files = req.files;
-        const imageUrls = files.map((file) => `${file.filename}`);
+        // Map each file to an object with url and public_id from Cloudinary
+        const imageUrls = files.map((file) => ({
+          url: file.path,
+          public_id: file.filename,
+        }));
 
         const eventData = req.body;
         eventData.images = imageUrls;
         eventData.shop = shop;
 
-        const product = await Event.create(eventData);
+        const event = await Event.create(eventData);
 
         res.status(201).json({
           success: true,
-          product,
+          event,
         });
       }
     } catch (error) {
@@ -40,7 +44,7 @@ router.post(
   })
 );
 
-// get all events
+// Get all events
 router.get("/get-all-events", async (req, res, next) => {
   try {
     const events = await Event.find();
@@ -53,13 +57,12 @@ router.get("/get-all-events", async (req, res, next) => {
   }
 });
 
-// get all events of a shop
+// Get all events of a shop
 router.get(
   "/get-all-events/:id",
   catchAsyncErrors(async (req, res, next) => {
     try {
       const events = await Event.find({ shopId: req.params.id });
-
       res.status(201).json({
         success: true,
         events,
@@ -70,36 +73,32 @@ router.get(
   })
 );
 
-// delete event of a shop
+// Delete event of a shop
 router.delete(
   "/delete-shop-event/:id",
   isSeller,
   catchAsyncErrors(async (req, res, next) => {
     try {
-      const productId = req.params.id;
+      const eventId = req.params.id;
+      const eventData = await Event.findById(eventId);
 
-      const eventData = await Event.findById(productId);
+      if (!eventData) {
+        return next(new ErrorHandler("Event not found!", 404));
+      }
 
-      eventData.images.forEach((imageUrl) => {
-        const filename = imageUrl;
-        const filePath = `uploads/${filename}`;
+      // Delete each image from Cloudinary using its public_id
+      for (const image of eventData.images) {
+        await cloudinary.uploader.destroy(image.public_id);
+      }
 
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.log(err);
-          }
-        });
-      });
-
-      const event = await Event.findByIdAndDelete(productId);
-
+      const event = await Event.findByIdAndDelete(eventId);
       if (!event) {
         return next(new ErrorHandler("Event not found with this id!", 500));
       }
 
       res.status(201).json({
         success: true,
-        message: "Event Deleted successfully!",
+        message: "Event deleted successfully!",
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
@@ -107,16 +106,14 @@ router.delete(
   })
 );
 
-// all events --- for admin
+// Get all events --- for admin
 router.get(
   "/admin-all-events",
   isAuthenticated,
   isAdmin("Admin"),
   catchAsyncErrors(async (req, res, next) => {
     try {
-      const events = await Event.find().sort({
-        createdAt: -1,
-      });
+      const events = await Event.find().sort({ createdAt: -1 });
       res.status(201).json({
         success: true,
         events,
@@ -127,31 +124,34 @@ router.get(
   })
 );
 
-// review for a Event
+// Review for an event
 router.put(
   "/create-new-review-event",
   isAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
     try {
-      const { user, rating, comment, productId, orderId } = req.body;
-
-      const event = await Event.findById(productId);
+      const { user, rating, comment, eventId, orderId } = req.body;
+      // Find the event by its id (changed parameter to eventId for clarity)
+      const event = await Event.findById(eventId);
 
       const review = {
         user,
         rating,
         comment,
-        productId,
+        eventId,
       };
 
+      // Convert ObjectId to string for comparison
       const isReviewed = event.reviews.find(
-        (rev) => rev.user._id === req.user._id
+        (rev) => rev.user._id.toString() === req.user._id.toString()
       );
 
       if (isReviewed) {
         event.reviews.forEach((rev) => {
-          if (rev.user._id === req.user._id) {
-            (rev.rating = rating), (rev.comment = comment), (rev.user = user);
+          if (rev.user._id.toString() === req.user._id.toString()) {
+            rev.rating = rating;
+            rev.comment = comment;
+            rev.user = user;
           }
         });
       } else {
@@ -159,11 +159,9 @@ router.put(
       }
 
       let avg = 0;
-
       event.reviews.forEach((rev) => {
         avg += rev.rating;
       });
-
       event.ratings = avg / event.reviews.length;
 
       await event.save({ validateBeforeSave: false });
@@ -171,12 +169,12 @@ router.put(
       await Order.findByIdAndUpdate(
         orderId,
         { $set: { "cart.$[elem].isReviewed": true } },
-        { arrayFilters: [{ "elem._id": productId }], new: true }
+        { arrayFilters: [{ "elem._id": eventId }], new: true }
       );
 
       res.status(200).json({
         success: true,
-        message: "Reviwed succesfully!",
+        message: "Reviewed successfully!",
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));

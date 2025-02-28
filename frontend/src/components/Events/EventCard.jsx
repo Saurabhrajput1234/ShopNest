@@ -6,9 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addTocart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 
-
 const backend_url = process.env.REACT_APP_ENDPOINT;
-
 
 const EventCard = ({ active, data }) => {
   const { cart } = useSelector((state) => state.cart);
@@ -21,14 +19,14 @@ const EventCard = ({ active, data }) => {
   const addToCartHandler = (data) => {
     const isItemExists = cart && cart.find((i) => i._id === data._id);
     if (isItemExists) {
-      toast.error("Item alredy in cart!");
+      toast.error("Item already in cart!");
     } else {
       if (data.stock < 1) {
         toast.error("Product stock limited!");
       } else {
         const cartData = { ...data, qty: 1 };
         dispatch(addTocart(cartData));
-        toast.success("item added to cart successfully!");
+        toast.success("Item added to cart successfully!");
       }
     }
   };
@@ -40,10 +38,10 @@ const EventCard = ({ active, data }) => {
       } lg:flex p-2`}
     >
       <div className="w-full lg:w-[50%] m-auto">
-        <img src={`${data.images[0]}`} alt="" />
+        <img src={data?.images?.[0]?.url} alt="Product" className="w-full" />
       </div>
 
-      <div className="w-full lg:[w-50%] flex flex-col justify-center">
+      <div className="w-full lg:w-[50%] flex flex-col justify-center">
         <h2 className={`${styles.productTitle}`}>{data.name}</h2>
         <p>{data.description}</p>
 
