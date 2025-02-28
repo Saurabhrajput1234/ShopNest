@@ -7,7 +7,7 @@ const Order = require("../model/order");
 const Shop = require("../model/shop");
 const { upload } = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
-const fs = require("fs");
+const cloudinary = require("cloudinary").v2; // Added Cloudinary
 
 // create product
 router.post(
@@ -21,11 +21,15 @@ router.post(
         return next(new ErrorHandler("Shop Id is invalid!", 400));
       } else {
         const files = req.files;
-        const imageUrls = files.map((file) => `${file.filename}`);
+        // Map each file to an object containing Cloudinary URL and public_id
+        const imageUrls = files.map((file) => ({
+          url: file.path,
+          public_id: file.filename,
+        }));
 
         const productData = req.body;
         productData.images = imageUrls;
-        productData.shop = shop;
+        productData.shop = shop; // Alternatively, you might want to store shop._id
 
         const product = await Product.create(productData);
 
@@ -64,19 +68,15 @@ router.delete(
   catchAsyncErrors(async (req, res, next) => {
     try {
       const productId = req.params.id;
-
       const productData = await Product.findById(productId);
-
-      productData.images.forEach((imageUrl) => {
-        const filename = imageUrl;
-        const filePath = `uploads/${filename}`;
-
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.log(err);
-          }
-        });
-      });
+      if (!productData) {
+        return next(new ErrorHandler("Product not found!", 404));
+      }
+      
+      // Delete each image from Cloudinary using its public_id
+      for (const image of productData.images) {
+        await cloudinary.uploader.destroy(image.public_id);
+      }
 
       const product = await Product.findByIdAndDelete(productId);
 
@@ -118,7 +118,6 @@ router.put(
   catchAsyncErrors(async (req, res, next) => {
     try {
       const { user, rating, comment, productId, orderId } = req.body;
-
       const product = await Product.findById(productId);
 
       const review = {
@@ -128,14 +127,17 @@ router.put(
         productId,
       };
 
+      // Use toString() to compare ObjectIDs
       const isReviewed = product.reviews.find(
-        (rev) => rev.user._id === req.user._id
+        (rev) => rev.user._id.toString() === req.user._id.toString()
       );
 
       if (isReviewed) {
         product.reviews.forEach((rev) => {
-          if (rev.user._id === req.user._id) {
-            (rev.rating = rating), (rev.comment = comment), (rev.user = user);
+          if (rev.user._id.toString() === req.user._id.toString()) {
+            rev.rating = rating;
+            rev.comment = comment;
+            rev.user = user;
           }
         });
       } else {
@@ -143,11 +145,9 @@ router.put(
       }
 
       let avg = 0;
-
       product.reviews.forEach((rev) => {
         avg += rev.rating;
       });
-
       product.ratings = avg / product.reviews.length;
 
       await product.save({ validateBeforeSave: false });
@@ -160,7 +160,7 @@ router.put(
 
       res.status(200).json({
         success: true,
-        message: "Reviwed succesfully!",
+        message: "Reviewed successfully!",
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));

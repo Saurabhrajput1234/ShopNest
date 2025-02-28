@@ -50,6 +50,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  avatarPublicId: {
+    type: String, // Cloudinary public_id for image management
+  },
   createdAt: {
     type: Date,
     default: Date.now(),

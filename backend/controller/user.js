@@ -19,17 +19,16 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
     const userEmail = await User.findOne({ email });
 
     if (userEmail) {
-      // if user already exits account is not create and file is deleted
-      const filename = req.file.filename;
-      const filePath = `uploads/${filename}`;
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.log(err);
-          res.status(500).json({ message: "Error deleting file" });
-        }
-      });
-
-      return next(new ErrorHandler("User already exits", 400));
+      // If user already exists, delete the local uploaded file (if present)
+      if (req.file && req.file.path) {
+        fs.unlink(req.file.path, (err) => {
+          if (err) {
+            console.log("Error deleting file: ", err);
+            res.status(500).json({ message: "Error deleting file" });
+          }
+        });
+      }
+      return next(new ErrorHandler("User already exists", 400));
     }
 
     // Upload image to Cloudinary
@@ -37,27 +36,34 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
       folder: "avatars",
     });
 
+    // Optionally delete the local file after successful upload
+    fs.unlink(req.file.path, (err) => {
+      if (err) {
+        console.log("Error deleting local file after upload: ", err);
+      }
+    });
+
     const user = {
       name,
       email,
       password,
       avatar: result.secure_url,
+      avatarPublicId: result.public_id, // Store public_id for later deletion
     };
 
     const activationToken = createActivationToken(user);
-
     const activationUrl = `https://shopnest-fawn.vercel.app/activation/${activationToken}`;
 
-    // send email to user
+    // Send activation email to the user
     try {
       await sendMail({
         email: user.email,
         subject: "Activate your account",
-        message: `Hello  ${user.name}, please click on the link to activate your account ${activationUrl} `,
+        message: `Hello ${user.name}, please click on the link to activate your account ${activationUrl}`,
       });
       res.status(201).json({
         success: true,
-        message: `please check your email:- ${user.email} to activate your account!`,
+        message: `Please check your email: ${user.email} to activate your account!`,
       });
     } catch (err) {
       return next(new ErrorHandler(err.message, 500));
@@ -67,16 +73,16 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
   }
 });
 
-// create activation token
+// Create activation token for user account activation
 const createActivationToken = (user) => {
   // why use create activatetoken?
   // to create a token for the user to activate their account  after they register
   return jwt.sign(user, process.env.ACTIVATION_SECRET, {
-    expiresIn: '5d' ,
+    expiresIn: "5d",
   });
 };
 
-// activate user account
+// Activate user account
 router.post(
   "/activation",
   catchAsyncErrors(async (req, res, next) => {
@@ -90,10 +96,9 @@ router.post(
       if (!newUser) {
         return next(new ErrorHandler("Invalid token", 400));
       }
-      const { name, email, password, avatar } = newUser;
+      const { name, email, password, avatar, avatarPublicId } = newUser;
 
       let user = await User.findOne({ email });
-
       if (user) {
         return next(new ErrorHandler("User already exists", 400));
       }
@@ -101,6 +106,7 @@ router.post(
         name,
         email,
         avatar,
+        avatarPublicId,
         password,
       });
       sendToken(user, 201, res);
@@ -110,7 +116,7 @@ router.post(
   })
 );
 
-// login user
+// Login user
 router.post(
   "/login-user",
   catchAsyncErrors(async (req, res, next) => {
@@ -118,21 +124,19 @@ router.post(
       const { email, password } = req.body;
 
       if (!email || !password) {
-        return next(new ErrorHandler("Please provide the all filelds", 400));
+        return next(new ErrorHandler("Please provide all fields", 400));
       }
       const user = await User.findOne({ email }).select("+password");
       // +password is used to select the password field from the database
 
       if (!user) {
-        return next(new ErrorHandler("user doesn't exits", 400));
+        return next(new ErrorHandler("User doesn't exist", 400));
       }
 
-      // compore password with database password
       const isPasswordValid = await user.comparePassword(password);
-
       if (!isPasswordValid) {
         return next(
-          new ErrorHandler("Please provide the correct inforamtions", 400)
+          new ErrorHandler("Please provide the correct information", 400)
         );
       }
       sendToken(user, 201, res);
@@ -142,16 +146,15 @@ router.post(
   })
 );
 
-// load user
+// Load user
 router.get(
   "/getuser",
   isAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
     try {
       const user = await User.findById(req.user.id);
-
       if (!user) {
-        return next(new ErrorHandler("User doesn't exists", 400));
+        return next(new ErrorHandler("User doesn't exist", 400));
       }
       res.status(200).json({
         success: true,
@@ -163,7 +166,7 @@ router.get(
   })
 );
 
-// log out user
+// Logout user
 router.get(
   "/logout",
   catchAsyncErrors(async (req, res, next) => {
@@ -182,27 +185,19 @@ router.get(
   })
 );
 
-// update user info
+// Update user info
 router.put(
   "/update-user-info",
   isAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
     try {
       const { email, password, phoneNumber, name } = req.body;
-
-      /* The line `const user = await User.findOne({ email }).select("+password");` is querying the database
-to find a user with the specified email address. The `select("+password")` part is used to include
-the password field in the returned user object. By default, the password field is not selected when
-querying the database for security reasons. However, in this case, the password field is needed to
-compare the provided password with the stored password for authentication purposes. */
       const user = await User.findOne({ email }).select("+password");
-
       if (!user) {
         return next(new ErrorHandler("User not found", 400));
       }
 
       const isPasswordValid = await user.comparePassword(password);
-
       if (!isPasswordValid) {
         return next(
           new ErrorHandler("Please provide the correct information", 400)
@@ -214,7 +209,6 @@ compare the provided password with the stored password for authentication purpos
       user.phoneNumber = phoneNumber;
 
       await user.save();
-
       res.status(201).json({
         success: true,
         user,
@@ -225,7 +219,7 @@ compare the provided password with the stored password for authentication purpos
   })
 );
 
-// update user avatar
+// Update user avatar
 router.put(
   "/update-avatar",
   isAuthenticated,
@@ -234,23 +228,31 @@ router.put(
     try {
       const existsUser = await User.findById(req.user.id);
 
-      const existAvatarPath = `uploads/${existsUser.avatar}`;
+      // Remove previous avatar from Cloudinary if it exists
+      if (existsUser.avatarPublicId) {
+        await cloudinary.uploader.destroy(existsUser.avatarPublicId);
+      }
 
-      fs.unlinkSync(existAvatarPath); // Delete Priviuse Image
-
-      const fileUrl = path.join(req.file.filename); // new image
-
-      /* The code `const user = await User.findByIdAndUpdate(req.user.id, { avatar: fileUrl });` is
-        updating the avatar field of the user with the specified `req.user.id`. It uses the
-        `User.findByIdAndUpdate()` method to find the user by their id and update the avatar field
-        with the new `fileUrl` value. The updated user object is then stored in the `user` variable. */
-      const user = await User.findByIdAndUpdate(req.user.id, {
-        avatar: fileUrl,
+      // Upload new image to Cloudinary
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "avatars",
       });
+
+      // Optionally remove the local file after upload
+      fs.unlink(req.file.path, (err) => {
+        if (err) {
+          console.log("Error deleting local file: ", err);
+        }
+      });
+
+      // Update user's avatar and public id
+      existsUser.avatar = result.secure_url;
+      existsUser.avatarPublicId = result.public_id;
+      await existsUser.save();
 
       res.status(200).json({
         success: true,
-        user,
+        user: existsUser,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
@@ -258,7 +260,7 @@ router.put(
   })
 );
 
-// update user addresses
+// Update user addresses
 router.put(
   "/update-user-addresses",
   isAuthenticated,
@@ -282,12 +284,10 @@ router.put(
       if (existsAddress) {
         Object.assign(existsAddress, req.body);
       } else {
-        // add the new address to the array
         user.addresses.push(req.body);
       }
 
       await user.save();
-
       res.status(200).json({
         success: true,
         user,
@@ -298,7 +298,7 @@ router.put(
   })
 );
 
-// delete user address
+// Delete user address
 router.delete(
   "/delete-user-address/:id",
   isAuthenticated,
@@ -307,17 +307,12 @@ router.delete(
       const userId = req.user._id;
       const addressId = req.params.id;
 
-      //   console.log(addressId);
-
       await User.updateOne(
-        {
-          _id: userId,
-        },
+        { _id: userId },
         { $pull: { addresses: { _id: addressId } } }
       );
 
       const user = await User.findById(userId);
-
       res.status(200).json({ success: true, user });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
@@ -325,34 +320,25 @@ router.delete(
   })
 );
 
-// update user password
+// Update user password
 router.put(
   "/update-user-password",
   isAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
     try {
       const user = await User.findById(req.user.id).select("+password");
-
       const isPasswordMatched = await user.comparePassword(
         req.body.oldPassword
       );
-
       if (!isPasswordMatched) {
         return next(new ErrorHandler("Old password is incorrect!", 400));
       }
-
-      /* The line `if (req.body.newPassword !== req.body.confirmPassword)` is checking if the value of
-    `newPassword` in the request body is not equal to the value of `confirmPassword` in the request
-    body. This is used to ensure that the new password entered by the user matches the confirmation
-    password entered by the user. If the two values do not match, it means that the user has entered
-    different passwords and an error is returned. */
       if (req.body.newPassword !== req.body.confirmPassword) {
         return next(
-          new ErrorHandler("Password doesn't matched with each other!", 400)
+          new ErrorHandler("Password doesn't match!", 400)
         );
       }
       user.password = req.body.newPassword;
-
       await user.save();
 
       res.status(200).json({
@@ -365,13 +351,12 @@ router.put(
   })
 );
 
-// find user infoormation with the userId
+// Find user information by user ID
 router.get(
   "/user-info/:id",
   catchAsyncErrors(async (req, res, next) => {
     try {
       const user = await User.findById(req.params.id);
-
       res.status(201).json({
         success: true,
         user,
@@ -382,7 +367,7 @@ router.get(
   })
 );
 
-// all users --- for admin
+// Get all users (Admin)
 router.get(
   "/admin-all-users",
   isAuthenticated,
@@ -402,7 +387,7 @@ router.get(
   })
 );
 
-// delete users --- admin
+// Delete user (Admin)
 router.delete(
   "/delete-user/:id",
   isAuthenticated,
@@ -410,15 +395,18 @@ router.delete(
   catchAsyncErrors(async (req, res, next) => {
     try {
       const user = await User.findById(req.params.id);
-
       if (!user) {
         return next(
           new ErrorHandler("User is not available with this id", 400)
         );
       }
 
-      await User.findByIdAndDelete(req.params.id);
+      // Remove user's avatar from Cloudinary if exists
+      if (user.avatarPublicId) {
+        await cloudinary.uploader.destroy(user.avatarPublicId);
+      }
 
+      await User.findByIdAndDelete(req.params.id);
       res.status(201).json({
         success: true,
         message: "User deleted successfully!",
