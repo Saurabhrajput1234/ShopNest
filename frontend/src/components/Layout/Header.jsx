@@ -21,6 +21,7 @@ import logo from '../../Assests/img/shopnest-bg2.png'
 
 
 
+
 const backend_url = process.env.REACT_APP_ENDPOINT;
 
 const Header = ({ activeHeading }) => {
