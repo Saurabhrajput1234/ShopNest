@@ -33,12 +33,12 @@ const EventCard = ({ active, data }) => {
 
   return (
     <div
-      className={`w-full block bg-white rounded-lg ${
+      className={`w-[97vw] block bg-white rounded-lg ${
         active ? "unset" : "mb-12"
-      } lg:flex p-2`}
+      } lg:flex p-2 m-[20px]` }
     >
       <div className="w-full lg:w-[50%] m-auto">
-        <img src={data?.images?.[0]?.url} alt="Product" className="w-full" />
+        <img src={data?.images?.[0]?.url} alt="Product" className="max-w-[600px] p-[37px] h-[340px]" />
       </div>
 
       <div className="w-full lg:w-[50%] flex flex-col justify-center">
