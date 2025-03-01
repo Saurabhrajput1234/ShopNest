@@ -12,7 +12,7 @@ const ENDPOINT = process.env.REACT_APP_ENDPOINT_SOCKET;
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 
-const backend_url = process.env.REACT_APP_ENDPOINT;
+
 const server = process.env.REACT_APP_ENDPOINT_API;
 const DashboardMessages = () => {
   const { seller } = useSelector((state) => state.seller);
