@@ -30,7 +30,7 @@ const EventCard = ({ active, data }) => {
   };
 
   return (
-    <div className="w-full max-w-screen-lg mx-auto bg-white rounded-lg p-4 my-5 shadow-md">
+    <div className="w-full max-w-[1350px] mx-auto bg-white rounded-lg p-4 my-5 shadow-md">
       <div className="flex flex-col lg:flex-row">
         {/* Image Section */}
         <div className="w-full lg:w-1/2 flex justify-center items-center p-4">
