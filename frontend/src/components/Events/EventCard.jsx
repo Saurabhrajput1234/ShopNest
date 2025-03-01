@@ -6,8 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { addTocart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 
-const backend_url = process.env.REACT_APP_ENDPOINT;
-
 const EventCard = ({ active, data }) => {
   const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
@@ -32,43 +30,48 @@ const EventCard = ({ active, data }) => {
   };
 
   return (
-    <div
-      className={`w-[97vw] block bg-white rounded-lg ${
-        active ? "unset" : "mb-12"
-      } lg:flex p-2 m-[20px]` }
-    >
-      <div className="w-full lg:w-[50%] m-auto">
-        <img src={data?.images?.[0]?.url} alt="Product" className="max-w-[600px] p-[37px] h-[340px]" />
-      </div>
-
-      <div className="w-full lg:w-[50%] flex flex-col justify-center">
-        <h2 className={`${styles.productTitle}`}>{data.name}</h2>
-        <p>{data.description}</p>
-
-        <div className="flex py-2 justify-between">
-          <div className="flex">
-            <h5 className="font-[500] text-[18px] text-[#d55b45] pr-3 line-through">
-              {data.originalPrice}$
-            </h5>
-            <h5 className="font-bold text-[20px] text-[#333] font-Roboto">
-              {data.discountPrice}$
-            </h5>
-          </div>
-          <span className="pr-3 font-[400] text-[17px] text-[#44a55e]">
-            {data.sold_out} sold
-          </span>
+    <div className="w-full max-w-screen-lg mx-auto bg-white rounded-lg p-4 my-5 shadow-md">
+      <div className="flex flex-col lg:flex-row">
+        {/* Image Section */}
+        <div className="w-full lg:w-1/2 flex justify-center items-center p-4">
+          <img
+            src={data?.images?.[0]?.url}
+            alt="Product"
+            className="object-contain w-full h-auto max-h-96"
+          />
         </div>
-        <CountDown data={data} />
-        <br />
-        <div className="flex items-center">
-          <Link to={`/product/${data._id}?isEvent=true`}>
-            <div className={`${styles.button} text-[#fff]`}>See Details</div>
-          </Link>
-          <div
-            className={`${styles.button} text-[#fff] ml-5`}
-            onClick={() => addToCartHandler(data)}
-          >
-            Add to cart
+        {/* Details Section */}
+        <div className="w-full lg:w-1/2 flex flex-col justify-center p-4">
+          <h2 className={`${styles.productTitle} text-lg md:text-xl font-bold mb-2`}>
+            {data.name}
+          </h2>
+          <p className="text-sm md:text-base mb-4">{data.description}</p>
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center">
+              <h5 className="font-medium text-base text-red-600 pr-3 line-through">
+                {data.originalPrice}$
+              </h5>
+              <h5 className="font-bold text-xl text-gray-800">
+                {data.discountPrice}$
+              </h5>
+            </div>
+            <span className="font-normal text-base text-green-600">
+              {data.sold_out} sold
+            </span>
+          </div>
+          <CountDown data={data} />
+          <div className="flex flex-col sm:flex-row items-center mt-4 space-y-2 sm:space-y-0 sm:space-x-4">
+            <Link to={`/product/${data._id}?isEvent=true`} className="w-full sm:w-auto">
+              <div className={`${styles.button} text-white text-center py-2 px-4 rounded`}>
+                See Details
+              </div>
+            </Link>
+            <button
+              onClick={() => addToCartHandler(data)}
+              className={`${styles.button} text-white w-full sm:w-auto text-center py-2 px-4 rounded`}
+            >
+              Add to Cart
+            </button>
           </div>
         </div>
       </div>
