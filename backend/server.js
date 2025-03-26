@@ -32,7 +32,7 @@ app.use(
   cors({
     origin:[
       "https://shopnest-fawn.vercel.app",
-      "http://localhost:3000",
+      "http://localhost:3001",
     ],
     
     credentials: true,
