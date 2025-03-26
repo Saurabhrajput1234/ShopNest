@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  shopnest-backend:
+    build: ./backend
+    container_name: shopnest-backend
+    restart: always
+    networks:
+      - shopnest-network
+    depends_on:
+      - shopnest-db
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URI=mongodb://saurabhrajput30072002:hQ3D5bHX8YZ8TUFL@shopnest-db:27017/shopnest
+      - PORT=8000
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  shopnest-frontend:
+    build: ./frontend
+    container_name: shopnest-frontend
+    restart: always
+    networks:
+      - shopnest-network
+    depends_on:
+      - shopnest-backend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  socket-service:
+    build: ./socket
+    container_name: socket-container
+    restart: always
+    networks:
+      - shopnest-network
+    depends_on:
+      - shopnest-backend
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./socket:/app
+      - /app/node_modules
+
+networks:
+  shopnest-network:
+    driver: bridge
