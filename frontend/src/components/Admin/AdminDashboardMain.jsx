@@ -4,7 +4,7 @@ import { AiOutlineArrowRight, AiOutlineMoneyCollect } from "react-icons/ai";
 import { MdBorderClear } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { DataGrid } from "@material-ui/data-grid";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersOfAdmin } from "../../redux/actions/order";
 import Loader from "../Layout/Loader";

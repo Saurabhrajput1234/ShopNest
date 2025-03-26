@@ -10,7 +10,7 @@ import { AiOutlineArrowRight, AiOutlineCamera, AiOutlineDelete } from 'react-ico
 import { Link } from 'react-router-dom';
 import styles from "../../styles/styles";
 import { DataGrid } from "@material-ui/data-grid";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import { RxCross1 } from 'react-icons/rx'
 import { MdTrackChanges } from "react-icons/md";
 import { toast } from "react-toastify";
