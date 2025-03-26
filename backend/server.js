@@ -18,18 +18,23 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 connectDatabase();
 
 // create server
-const server = app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT || 8000, () => {
   console.log(`Server is running on http://localhost:${process.env.PORT}`);
 });
 
 // middlewares
+
 app.use(express.json());
 app.use(cookieParser());
 // Enable CORS for all routes
 
 app.use(
   cors({
-    origin: "https://shopnest-fawn.vercel.app",
+    origin:[
+      "https://shopnest-fawn.vercel.app",
+      "http://localhost:3000",
+    ],
+    
     credentials: true,
   })
 );
