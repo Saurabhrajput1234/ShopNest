@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  shopnest-db:
+    image: mongo
+    container_name: shopnest-db
+    restart: always
+    networks:
+      - shopnest-network
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: saurabhrajput30072002
+      MONGO_INITDB_ROOT_PASSWORD: hQ3D5bHX8YZ8TUFL
+      MONGO_INITDB_DATABASE: shopnest
+
   shopnest-backend:
     build: ./backend
     container_name: shopnest-backend
