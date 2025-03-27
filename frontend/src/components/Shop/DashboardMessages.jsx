@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
 import styles from "../../styles/styles";
@@ -23,7 +23,7 @@ const DashboardMessages = () => {
   const [userData, setUserData] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const [images, setImages] = useState();
+  // const [images, setImages] = useState();
   const [activeStatus, setActiveStatus] = useState(false);
   const [open, setOpen] = useState(false);
   const scrollRef = useRef(null);
@@ -154,7 +154,7 @@ const DashboardMessages = () => {
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    setImages(file);
+    // setImages(file);
     imageSendingHandler(file);
   };
 
@@ -184,7 +184,7 @@ const DashboardMessages = () => {
           },
         })
         .then((res) => {
-          setImages();
+          // setImages();
           setMessages([...messages, res.data.message]);
           updateLastMessageForImage();
         });
@@ -376,7 +376,7 @@ const SellerInbox = ({
                 )}
 
                 {item.images && (
-                  <img
+                  <img alt="i"
                     src={`${item.images}`}
                     className="w-[300px] h-[300px] object-cover rounded-[10px] mr-2"
                   />
@@ -403,7 +403,7 @@ const SellerInbox = ({
 
       {/* send message input */}
       <form
-        aria-required={true}
+        required
         className="p-3 relative w-full flex justify-between items-center"
         onSubmit={sendMessageHandler}
       >

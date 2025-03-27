@@ -12,7 +12,7 @@ const ENDPOINT = process.env.REACT_APP_ENDPOINT_SOCKET;
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 
-const backend_url = process.env.REACT_APP_ENDPOINT;
+
 const server = process.env.REACT_APP_ENDPOINT_API;
 const UserInbox = () => {
   const { user } = useSelector((state) => state.user);
@@ -23,7 +23,7 @@ const UserInbox = () => {
   const [newMessage, setNewMessage] = useState("");
   const [userData, setUserData] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const [images, setImages] = useState();
+  // const [images, setImages] = useState();
   const [activeStatus, setActiveStatus] = useState(false);
   const [open, setOpen] = useState(false);
   const scrollRef = useRef(null);
@@ -151,7 +151,7 @@ const UserInbox = () => {
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    setImages(file);
+    // setImages(file);
     imageSendingHandler(file);
   };
 
@@ -181,7 +181,7 @@ const UserInbox = () => {
           },
         })
         .then((res) => {
-          setImages();
+          // setImages();
           setMessages([...messages, res.data.message]);
           updateLastMessageForImage();
         });
@@ -281,7 +281,7 @@ const MessageList = ({
       }
     };
     getUser();
-  }, [me, data]);
+  }, [me, data,online,setActiveStatus]);
 
   return (
     <div
@@ -375,7 +375,7 @@ const SellerInbox = ({
               {item.images && (
                 <img
                   src={`${item.images}`}
-                  className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
+                  className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2" alt="p"
                 />
               )}
               {item.text !== "" && (
@@ -398,8 +398,7 @@ const SellerInbox = ({
       </div>
 
       {/* send message input */}
-      <form
-        aria-required={true}
+      <form 
         className="p-3 relative w-full flex justify-between items-center"
         onSubmit={sendMessageHandler}
       >

@@ -8,7 +8,6 @@ import Loader from "../Layout/Loader";
 
 
 
-const backend_url = process.env.REACT_APP_ENDPOINT;
 const server = process.env.REACT_APP_ENDPOINT_API;
 
 const ShopInfo = ({ isOwner }) => {
@@ -30,7 +29,7 @@ const ShopInfo = ({ isOwner }) => {
             console.log(error);
             setIsLoading(false);
         })
-    }, [])
+    }, [dispatch,id])
 
 
     const logoutHandler = async () => {

@@ -24,9 +24,9 @@ const CountDown = ({ data }) => {
 
   function calculateTimeLeft() {
     // today date + 3 days
-    const evDate = new Date(
-      new Date().getTime() + 3 * 24 * 60 * 60 * 1000
-    ).toLocaleDateString();
+    // const evDate = new Date(
+    //   new Date().getTime() + 3 * 24 * 60 * 60 * 1000
+    // ).toLocaleDateString();
 
     // const difference = +new Date(evDate) - +new Date();
     const difference = +new Date(data.Finish_Date) - +new Date();

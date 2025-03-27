@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "../../styles/styles";
-import { productData, categoriesData } from "../../static/data";
+import { categoriesData } from "../../static/data";
 import {
   AiOutlineHeart,
   AiOutlineSearch,
@@ -22,7 +22,6 @@ import logo from '../../Assests/img/shopnest-bg2.png'
 
 
 
-const backend_url = process.env.REACT_APP_ENDPOINT;
 
 const Header = ({ activeHeading }) => {
   const { isSeller } = useSelector((state) => state.seller);
@@ -101,7 +100,7 @@ const Header = ({ activeHeading }) => {
                               alt="img"
                               className="w-[40px] h-[40px] mr-[10px]"
                             />
-                            <h1>{i.name}</h1>
+                            <h1>{d}</h1>
                           </div>
                         </Link>
                       );
@@ -128,7 +127,7 @@ const Header = ({ activeHeading }) => {
       {/*  2nd part of header start */}
       <div
         className={`${
-          active == true ? "shadow-sm fixed top-0 left-0 z-10" : null
+          active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
         } transition hidden 800px:flex items-center justify-between w-full bg-[#2A292B] h-[70px]`}
       >
         <div

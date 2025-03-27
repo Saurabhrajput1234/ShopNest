@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -9,23 +9,18 @@ const SellerActivationPage = () => {
     const [error, setError] = useState(false);
 
     useEffect(() => {
-        if (activation_token) {
-            const activationEmail = async () => {
-                try {
-                    const res = await axios
-                        .post(`${server}/shop/activation`, {
-                            activation_token
-                        })
-
-                } catch (err) {
-                    console.log(err.response.data.message);
-                    setError(true);
-                }
+        const activationEmail = async () => {
+            if (!activation_token) return;
+            try {
+                await axios.post(`${server}/shop/activation`, { activation_token });
+            } catch (err) {
+                console.error(err.response?.data?.message || "Activation failed");
+                setError(true);
             }
-            activationEmail();
-        }
+        };
 
-    }, []);
+        activationEmail();
+    }, [activation_token]); // Added dependency
 
     return (
         <div
@@ -35,21 +30,15 @@ const SellerActivationPage = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-            }}>
-            {
-                error ? (
-                    <p className='text-red-800'>Your token is expair </p>
-                ) : (
-                    <p className='text-green-800'>Your Account has been created sucess fully!</p>
-                )
-            }
-
+            }}
+        >
+            {error ? (
+                <p className="text-red-800">Your token has expired</p>
+            ) : (
+                <p className="text-green-800">Your account has been created successfully!</p>
+            )}
         </div>
-    )
-}
+    );
+};
 
-export default SellerActivationPage
-
-
-
-
+export default SellerActivationPage;

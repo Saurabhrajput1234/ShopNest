@@ -93,7 +93,7 @@ const ShopSettings = () => {
 
                 {/* shop info */}
                 <form
-                    aria-aria-required={true}
+                    required
                     className="flex flex-col items-center"
                     onSubmit={updateHandler}
                 >

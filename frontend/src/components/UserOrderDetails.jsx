@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/styles";
 import { BsFillBagFill } from "react-icons/bs";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { RxCross1 } from "react-icons/rx";
@@ -9,7 +9,6 @@ import { getAllOrdersOfUser } from "../redux/actions/order";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
-const backend_url = process.env.REACT_APP_ENDPOINT;
 const server = process.env.REACT_APP_ENDPOINT_API;
 
 const UserOrderDetails = () => {

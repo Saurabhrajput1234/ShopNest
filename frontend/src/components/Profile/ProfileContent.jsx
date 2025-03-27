@@ -20,7 +20,7 @@ import { getAllOrdersOfUser } from '../../redux/actions/order';
 
 
 
-const backend_url = process.env.REACT_APP_ENDPOINT;
+
 const server = process.env.REACT_APP_ENDPOINT_API;
 const ProfileContent = ({ active }) => {
     const { user, error, successMessage } = useSelector((state) => state.user);
@@ -28,7 +28,7 @@ const ProfileContent = ({ active }) => {
     const [email, setEmail] = useState(user && user.email);
     const [phoneNumber, setPhoneNumber] = useState(user && user.phoneNumber);
     const [password, setPassword] = useState("");
-    const [avatar, setAvatar] = useState(null);
+    // const [avatar, setAvatar] = useState(null);
 
     const dispatch = useDispatch();
 
@@ -42,7 +42,7 @@ const ProfileContent = ({ active }) => {
             toast.success(successMessage);
             dispatch({ type: "clearMessages" });
         }
-    }, [error, successMessage]);
+    }, [error, successMessage,dispatch]);
 
 
     const handleSubmit = (e) => {
@@ -52,8 +52,8 @@ const ProfileContent = ({ active }) => {
 
     // Image update
     const handleImage = async (e) => {
-        const file = e.target.files[0];
-        setAvatar(file);
+        // const file = e.target.files[0];
+        // setAvatar(file);
 
         const formData = new FormData();
 
@@ -104,7 +104,7 @@ const ProfileContent = ({ active }) => {
                         <br />
 
                         <div className='w-full px-5'>
-                            <form onSubmit={handleSubmit} aria-required={true}>
+                            <form onSubmit={handleSubmit} required>
                                 <div className='w-full 800px:flex block pb-3'>
 
                                     <div className=' w-[100%] 800px:w-[50%]'>
@@ -216,7 +216,7 @@ const AllOrders = () => {
 
     useEffect(() => {
         dispatch(getAllOrdersOfUser(user._id));
-    }, []);
+    }, [dispatch,user._id]);
 
 
 
@@ -310,7 +310,7 @@ const AllRefundOrders = () => {
 
     useEffect(() => {
         dispatch(getAllOrdersOfUser(user._id));
-    }, []);
+    }, [dispatch,user._id]);
 
 
     const eligibleOrders = orders && orders.filter((item) => item.status === "Processing refund");
@@ -401,7 +401,7 @@ const TrackOrder = () => {
 
     useEffect(() => {
         dispatch(getAllOrdersOfUser(user._id));
-    }, []);
+    }, [dispatch,user._id]);
 
 
 
@@ -519,7 +519,7 @@ const ChangePassword = () => {
             </h1>
             <div className='w-full'>
                 <form
-                    aria-required
+                    required
                     onSubmit={passwordChangeHandler}
                     className="flex flex-col items-center"
                 >
@@ -647,7 +647,7 @@ const Address = () => {
                                 Add New Address
                             </h1>
                             <div className='w-full'>
-                                <form aria-required onSubmit={handleSubmit} className="w-full">
+                                <form required onSubmit={handleSubmit} className="w-full">
                                     <div className="w-full block p-4">
                                         <div className="w-full pb-2">
                                             <label className="block pb-2">Country</label>

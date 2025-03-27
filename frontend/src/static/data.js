@@ -320,7 +320,7 @@ export const productData = [
     rating: 5,
     total_sell: 80,
     stock: 10,
-    category: "Mobile & Tablets",
+    // category: "Mobile & Tablets 1",
   },
   {
     id: 1,
@@ -351,7 +351,7 @@ export const productData = [
     rating: 4,
     total_sell: 75,
     stock: 10,
-    category: "Computers & Laptop",
+    // category: "Computers & Laptop 2",
   },
   {
     id: 4,
@@ -413,7 +413,7 @@ export const productData = [
     rating: 5,
     total_sell: 49,
     stock: 10,
-    category: "Shoes",
+    // category: "Shoes 1",
   },
   {
     id: 1,

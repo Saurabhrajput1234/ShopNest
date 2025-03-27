@@ -49,7 +49,7 @@ import {
   AdminDashboardWithdraw,
 } from "./routes/AdminRoutes";
 
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
 import { loadSeller, loadUser } from "./redux/actions/user";
