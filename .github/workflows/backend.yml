@@ -1,0 +1,26 @@
+name: Deploy Backend to Render
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t yourdockerhubusername/shopnest-backend ./backend
+          docker tag yourdockerhubusername/shopnest-backend:latest yourdockerhubusername/shopnest-backend:latest
+          docker push yourdockerhubusername/shopnest-backend:latest
+
+      - name: Deploy to Render
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
