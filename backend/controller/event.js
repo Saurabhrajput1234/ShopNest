@@ -43,7 +43,7 @@ router.post(
     }
   })
 );
-
+//check pipline
 // Get all events
 router.get("/get-all-events", async (req, res, next) => {
   try {
@@ -53,7 +53,7 @@ router.get("/get-all-events", async (req, res, next) => {
       events,
     });
   } catch (error) {
-    return next(new ErrorHandler(error, 400));
+    return  next(new ErrorHandler(error, 400));
   }
 });
 
