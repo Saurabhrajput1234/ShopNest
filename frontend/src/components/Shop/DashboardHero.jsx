@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersOfShop } from "../../redux/actions/order";
 import { getAllProductsShop } from "../../redux/actions/product";
 import { Button } from "@mui/material";
-import { DataGrid } from "@material-ui/data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 
 const DashboardHero = () => {
     const dispatch = useDispatch();

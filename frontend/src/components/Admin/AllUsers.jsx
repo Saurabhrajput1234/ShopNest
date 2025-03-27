@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getAllUsers } from "../../redux/actions/user";
-import { DataGrid } from "@material-ui/data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { AiOutlineDelete } from "react-icons/ai";
 import { Button } from "@mui/material";
 import styles from "../../styles/styles";
