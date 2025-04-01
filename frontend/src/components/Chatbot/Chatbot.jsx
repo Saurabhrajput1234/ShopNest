@@ -5,13 +5,17 @@ import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 
+
+
+const server = process.env.REACT_APP_ENDPOINT_API;
+
 const Chatbot = () => {
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Toggle Chatbot Open/Close
+    
     const toggleChat = () => setOpen(!open);
 
     // Handle Sending Message
@@ -24,7 +28,7 @@ const Chatbot = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post("http://localhost:8000/api/v2/chatbot/chat", { message: input });
+            const response = await axios.post(`${server}/chatbot/chat`, { message: input });
             const { faqResponse, aiResponse } = response.data;
 
             if (faqResponse) {
