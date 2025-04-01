@@ -31,8 +31,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin:[
-      "https://shopnest-fawn.vercel.app",
-      "http://localhost:3001",
+      "https://shopnest-fawn.vercel.app"
     ],
     
     credentials: true,
@@ -47,8 +46,7 @@ app.get("/test", (req, res) => {
 
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
-// why bodyparser?
-// bodyparser is used to parse the data from the body of the request to the server (POST, PUT, DELETE, etc.)
+
 
 // config
 if (process.env.NODE_ENV !== "PRODUCTION") {
@@ -72,7 +70,6 @@ const order = require("./controller/order");
 const message = require("./controller/message");
 const conversation = require("./controller/conversation");
 const withdraw = require("./controller/withdraw");
-app.use("/api/v2/withdraw", withdraw);
 const chatbotRoutes = require("./controller/chatbotRoutes");
 
 // end points
@@ -85,8 +82,7 @@ app.use("/api/v2/product", product);
 app.use("/api/v2/event", event);
 app.use("/api/v2/coupon", coupon);
 app.use("/api/v2/payment", payment);
-
-
+app.use("/api/v2/withdraw", withdraw);
 app.use("/api/v2/chatbot", chatbotRoutes);
 
 

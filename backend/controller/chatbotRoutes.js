@@ -1,7 +1,7 @@
 const express = require("express");
 const axios = require("axios");
-const Chat = require("../models/Chat");
-const FAQ = require("../models/faq");
+const Chat = require("../model/Chat");
+const FAQ = require("../model/faq");
 
 const router = express.Router();
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
