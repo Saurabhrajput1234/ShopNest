@@ -73,6 +73,7 @@ const message = require("./controller/message");
 const conversation = require("./controller/conversation");
 const withdraw = require("./controller/withdraw");
 app.use("/api/v2/withdraw", withdraw);
+const chatbotRoutes = require("./controller/chatbotRoutes");
 
 // end points
 app.use("/api/v2/user", user);
@@ -85,7 +86,10 @@ app.use("/api/v2/event", event);
 app.use("/api/v2/coupon", coupon);
 app.use("/api/v2/payment", payment);
 
-// it'for errhendel
+
+app.use("/api/v2/chatbot", chatbotRoutes);
+
+
 app.use(ErrorHandler);
 
 // Handling Uncaught Exceptions
@@ -93,6 +97,9 @@ process.on("uncaughtException", (err) => {
   console.log(`Error: ${err.message}`);
   console.log(`shutting down the server for handling UNCAUGHT EXCEPTION! 💥`);
 });
+
+
+
 
 // unhandled promise rejection
 process.on("unhandledRejection", (err) => {

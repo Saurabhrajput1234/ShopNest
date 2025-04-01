@@ -62,6 +62,7 @@ import { getAllEvents } from "./redux/actions/event";
 import axios from "axios";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import Chatbot from "./components/Chatbot/Chatbot";
 
 
 
@@ -99,7 +100,7 @@ const App = () => {
           </Routes>
         </Elements>
       )}
-
+      <Chatbot/>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
