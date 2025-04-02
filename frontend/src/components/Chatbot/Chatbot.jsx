@@ -20,13 +20,13 @@ const Chatbot = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    // Toggle Chatbot Open/Close
+    
     const toggleChat = () => {
         setOpen(!open);
         setShowNotification(false);
     };
 
-    // Handle Sending Message
+    
     const handleSendMessage = async () => {
         if (!input.trim()) return;
 
@@ -59,7 +59,7 @@ const Chatbot = () => {
 
     return (
         <>
-            {/* Floating Notification */}
+            
             {showNotification && !open && (
                 <Box
                     sx={{
@@ -76,7 +76,7 @@ const Chatbot = () => {
                     }}
                     onClick={toggleChat}
                 >
-                    Need help? Chat with AI!
+                   Need support? Our AI is ready to assist!
                 </Box>
             )}
 
@@ -137,11 +137,11 @@ const Chatbot = () => {
                                         msg.sender === "user"
                                             ? "#d1e7fd"
                                             : msg.sender === "faq"
-                                            ? "#fff3cd"
-                                            : "#e3f2fd",
+                                            ? "#FBC273"
+                                            : "#FBC273",
                                     borderRadius: "8px",
                                     color: "black",
-                                    maxWidth: "75%",
+                                    maxWidth: "100%",
                                     alignSelf: msg.sender === "user" ? "flex-end" : "flex-start"
                                 }}
                             >
