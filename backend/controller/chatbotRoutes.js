@@ -1,12 +1,33 @@
 const express = require("express");
 const axios = require("axios");
+const fs = require("fs");
 const Chat = require("../model/Chat");
 const FAQ = require("../model/faq");
 
 const router = express.Router();
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
+// Load ShopNest predefined information
+const shopnestInfo = JSON.parse(fs.readFileSync("./data/shopnest_info.json", "utf8"));
+
 console.log("OPENROUTER_API_KEY:", OPENROUTER_API_KEY);
+
+// Function to generate AI prompt with ShopNest context
+const generatePrompt = (userMessage) => {
+    return `
+    You are a chatbot representing "ShopNest", an e-commerce platform. Use the following information to answer the question accurately:
+
+    Name: ${shopnestInfo.name}
+    Description: ${shopnestInfo.description}
+    Features: ${shopnestInfo.features.join(", ")}
+    Return Policy: ${shopnestInfo.return_policy}
+    Payment Methods: ${shopnestInfo.payment_methods}
+    Customer Support: ${shopnestInfo.customer_support}
+
+    User Question: "${userMessage}"
+    Answer:
+    `;
+};
 
 // Route to handle chatbot interactions
 router.post("/chat", async (req, res) => {
@@ -20,12 +41,12 @@ router.post("/chat", async (req, res) => {
         let faqResponse = null;
         let aiResponse = null;
 
-        // Trim and remove quotes from user input for better matching
+        // Trim and remove quotes for better matching
         const cleanMessage = message.trim().replace(/['"]+/g, "");
 
-        // Check if the message matches any FAQ (flexible regex)
+        // Check for an FAQ match
         const faq = await FAQ.findOne({ 
-            question: { $regex: new RegExp(cleanMessage, "i") }  // Partial match
+            question: { $regex: new RegExp(cleanMessage, "i") }  // Case-insensitive search
         });
 
         console.log("User Input:", cleanMessage);
@@ -34,12 +55,14 @@ router.post("/chat", async (req, res) => {
         if (faq) {
             faqResponse = faq.answer;
         } else {
-            // If no FAQ match, query the AI model via OpenRouter
+            // If no FAQ match, query AI with ShopNest context
+            const aiPrompt = generatePrompt(message);
+            
             const response = await axios.post(
                 "https://openrouter.ai/api/v1/chat/completions",
                 {
                     model: "google/gemini-pro",
-                    messages: [{ role: "user", content: message }],
+                    messages: [{ role: "user", content: aiPrompt }],
                 },
                 {
                     headers: {
@@ -52,11 +75,11 @@ router.post("/chat", async (req, res) => {
             aiResponse = response.data.choices?.[0]?.message?.content || "I'm sorry, I couldn't understand that.";
         }
 
-        // Save the interaction to the database
+        // Save the conversation to the database
         const chat = new Chat({ userMessage: message, botResponse: faqResponse || aiResponse });
         await chat.save();
 
-        // Send both responses back to the frontend
+        // Return the response to the frontend
         res.json({ faqResponse, aiResponse });
     } catch (error) {
         console.error("Error processing chatbot request:", error);

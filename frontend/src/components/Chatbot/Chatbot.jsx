@@ -1,33 +1,29 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { Box, TextField, Button, Typography, CircularProgress, IconButton } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 
-const server = process.env.REACT_APP_ENDPOINT_API; // Ensure this is defined in .env
+
+
+const server = process.env.REACT_APP_ENDPOINT_API;
 
 const Chatbot = () => {
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
-    const messagesEndRef = useRef(null); // Ref for auto-scrolling
 
-    // Toggle Chat Window
-    const toggleChat = () => setOpen((prev) => !prev);
-
-    // Auto-scroll to the latest message
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
+    // Toggle Chatbot Open/Close
+    const toggleChat = () => setOpen(!open);
 
     // Handle Sending Message
     const handleSendMessage = async () => {
         if (!input.trim()) return;
 
         const userMessage = { text: input, sender: "user" };
-        setMessages((prev) => [...prev, userMessage]);
+        setMessages([...messages, userMessage]);
         setInput("");
         setLoading(true);
 
@@ -35,17 +31,21 @@ const Chatbot = () => {
             const response = await axios.post(`${server}/chatbot/chat`, { message: input });
             const { faqResponse, aiResponse } = response.data;
 
+            
             if (faqResponse) {
-                setMessages((prev) => [...prev, { text: faqResponse, sender: "faq" }]);
+                const faqReply = { text: faqResponse, sender: "faq" };
+                setMessages((prevMessages) => [...prevMessages, faqReply]);
             }
+
             if (aiResponse) {
-                setMessages((prev) => [...prev, { text: aiResponse, sender: "ai" }]);
+                const aiReply = { text: aiResponse, sender: "ai" };
+                setMessages((prevMessages) => [...prevMessages, aiReply]);
             }
         } catch (error) {
             console.error("Chatbot error:", error);
-            setMessages((prev) => [
-                ...prev,
-                { text: error.response?.data?.error || "Error connecting to chatbot.", sender: "bot" }
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { text: "Error connecting to chatbot.", sender: "bot" }
             ]);
         }
 
@@ -63,7 +63,7 @@ const Chatbot = () => {
                         right: 20,
                         backgroundColor: "#1976d2",
                         color: "white",
-                        "&:hover": { backgroundColor: "#1565c0" },
+                        "&:hover": { backgroundColor: "#1565c0" }
                     }}
                     onClick={toggleChat}
                 >
@@ -87,7 +87,7 @@ const Chatbot = () => {
                         flexDirection: "column",
                         backgroundColor: "white",
                         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-                        zIndex: 999,
+                        zIndex: 999
                     }}
                 >
                     {/* Header */}
@@ -99,9 +99,9 @@ const Chatbot = () => {
                     </Box>
 
                     {/* Chat Messages */}
-                    <Box sx={{ flexGrow: 1, overflowY: "auto", mb: 1, maxHeight: "350px" }}>
+                    <Box sx={{ flexGrow: 1, overflowY: "auto", mb: 1 }}>
                         {messages.map((msg, index) => (
-                            <Typography
+                          <Typography
                                 key={index}
                                 sx={{
                                     textAlign: msg.sender === "user" ? "right" : "left",
@@ -109,21 +109,17 @@ const Chatbot = () => {
                                     p: 1,
                                     backgroundColor:
                                         msg.sender === "user"
-                                            ? "#D1E8FF" // Light Blue
+                                            ? "#FFF176" 
                                             : msg.sender === "faq"
-                                            ? "#D4F8D4" // Light Green
-                                            : "#F8E8D4", // Light Orange
+                                            ? "#FFECB3" 
+                                            : "#FFF9C4", 
                                     borderRadius: "8px",
-                                    color: "black",
-                                    maxWidth: "80%",
-                                    alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
+                                    color: "black"
                                 }}
                             >
                                 {msg.text}
                             </Typography>
                         ))}
-                        {/* Auto-scroll ref */}
-                        <div ref={messagesEndRef} />
                     </Box>
 
                     {/* Loading Indicator */}
@@ -137,7 +133,7 @@ const Chatbot = () => {
                             onChange={(e) => setInput(e.target.value)}
                             placeholder="Type a message..."
                         />
-                        <Button onClick={handleSendMessage} sx={{ ml: 1 }} variant="contained" disabled={loading}>
+                        <Button onClick={handleSendMessage} sx={{ ml: 1 }} variant="contained">
                             <SendIcon />
                         </Button>
                     </Box>
