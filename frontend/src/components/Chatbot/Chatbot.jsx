@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Typography, CircularProgress, IconButton } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
-
-
 
 const server = process.env.REACT_APP_ENDPOINT_API;
 
@@ -14,9 +12,19 @@ const Chatbot = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showNotification, setShowNotification] = useState(true);
+
+    // Auto-hide notification after 5 seconds
+    useEffect(() => {
+        const timer = setTimeout(() => setShowNotification(false), 5000);
+        return () => clearTimeout(timer);
+    }, []);
 
     // Toggle Chatbot Open/Close
-    const toggleChat = () => setOpen(!open);
+    const toggleChat = () => {
+        setOpen(!open);
+        setShowNotification(false);
+    };
 
     // Handle Sending Message
     const handleSendMessage = async () => {
@@ -31,15 +39,12 @@ const Chatbot = () => {
             const response = await axios.post(`${server}/chatbot/chat`, { message: input });
             const { faqResponse, aiResponse } = response.data;
 
-            
             if (faqResponse) {
-                const faqReply = { text: faqResponse, sender: "faq" };
-                setMessages((prevMessages) => [...prevMessages, faqReply]);
+                setMessages((prevMessages) => [...prevMessages, { text: faqResponse, sender: "faq" }]);
             }
 
             if (aiResponse) {
-                const aiReply = { text: aiResponse, sender: "ai" };
-                setMessages((prevMessages) => [...prevMessages, aiReply]);
+                setMessages((prevMessages) => [...prevMessages, { text: aiResponse, sender: "ai" }]);
             }
         } catch (error) {
             console.error("Chatbot error:", error);
@@ -54,6 +59,27 @@ const Chatbot = () => {
 
     return (
         <>
+            {/* Floating Notification */}
+            {showNotification && !open && (
+                <Box
+                    sx={{
+                        position: "fixed",
+                        bottom: 80,
+                        right: 30,
+                        backgroundColor: "#1976d2",
+                        color: "white",
+                        padding: "10px 15px",
+                        borderRadius: "10px",
+                        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.2)",
+                        cursor: "pointer",
+                        zIndex: 1000
+                    }}
+                    onClick={toggleChat}
+                >
+                    Need help? Chat with AI!
+                </Box>
+            )}
+
             {/* Floating Chat Button */}
             {!open && (
                 <IconButton
@@ -81,12 +107,12 @@ const Chatbot = () => {
                         width: "350px",
                         height: "450px",
                         border: "1px solid gray",
-                        borderRadius: "8px",
+                        borderRadius: "12px",
                         p: 2,
                         display: "flex",
                         flexDirection: "column",
                         backgroundColor: "white",
-                        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+                        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
                         zIndex: 999
                     }}
                 >
@@ -99,9 +125,9 @@ const Chatbot = () => {
                     </Box>
 
                     {/* Chat Messages */}
-                    <Box sx={{ flexGrow: 1, overflowY: "auto", mb: 1 }}>
+                    <Box sx={{ flexGrow: 1, overflowY: "auto", mb: 1, padding: "5px" }}>
                         {messages.map((msg, index) => (
-                          <Typography
+                            <Typography
                                 key={index}
                                 sx={{
                                     textAlign: msg.sender === "user" ? "right" : "left",
@@ -109,12 +135,14 @@ const Chatbot = () => {
                                     p: 1,
                                     backgroundColor:
                                         msg.sender === "user"
-                                            ? "#FFF176" 
+                                            ? "#d1e7fd"
                                             : msg.sender === "faq"
-                                            ? "#FFECB3" 
-                                            : "#FFF9C4", 
+                                            ? "#fff3cd"
+                                            : "#e3f2fd",
                                     borderRadius: "8px",
-                                    color: "black"
+                                    color: "black",
+                                    maxWidth: "75%",
+                                    alignSelf: msg.sender === "user" ? "flex-end" : "flex-start"
                                 }}
                             >
                                 {msg.text}
