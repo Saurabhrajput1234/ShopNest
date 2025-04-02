@@ -208,11 +208,11 @@ const Header = ({ activeHeading }) => {
               </div>
             </div>
             {/* Avatar end */}
-            {/* card  popup start */}
+            
             {openCart ? <Cart setOpenCart={setOpenCart} /> : null}
-            {/* card popup end */}
+            
 
-            {/* Wish list pop uo Start */}
+           
             {openWishlist ? (
               <Wishlist setOpenWishlist={setOpenWishlist} />
             ) : null}
