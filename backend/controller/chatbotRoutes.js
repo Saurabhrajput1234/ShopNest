@@ -6,6 +6,8 @@ const FAQ = require("../model/faq");
 const router = express.Router();
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
+console.log("GEMINI_API_KEY:", process.env.GEMINI_API_KEY);
+
 // Route to handle chatbot interactions
 router.post("/chat", async (req, res) => {
     const { message } = req.body;
