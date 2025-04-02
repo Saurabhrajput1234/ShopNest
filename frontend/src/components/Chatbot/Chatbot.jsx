@@ -89,6 +89,7 @@ const Chatbot = () => {
                         right: 20,
                         backgroundColor: "#1976d2",
                         color: "white",
+                        zIndex: 1000,
                         "&:hover": { backgroundColor: "#1565c0" }
                     }}
                     onClick={toggleChat}
