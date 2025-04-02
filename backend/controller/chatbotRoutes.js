@@ -62,7 +62,7 @@ router.post("/chat", async (req, res) => {
                 "https://openrouter.ai/api/v1/chat/completions",
                 {
                     model: "google/gemini-pro",
-                    messages: [{ role: "user", content: aiPrompt }],
+                    messages: [{role: "system", content: "Provide short and concise answers within 2 sentences." },{ role: "user", content: aiPrompt }],
                 },
                 {
                     headers: {
