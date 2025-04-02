@@ -20,8 +20,17 @@ router.post("/chat", async (req, res) => {
         let faqResponse = null;
         let aiResponse = null;
 
-        // Check if the message matches any FAQ
-        const faq = await FAQ.findOne({ question: { $regex: new RegExp("^" + message + "$", "i") } });
+        // Trim and remove quotes from user input for better matching
+        const cleanMessage = message.trim().replace(/['"]+/g, "");
+
+        // Check if the message matches any FAQ (flexible regex)
+        const faq = await FAQ.findOne({ 
+            question: { $regex: new RegExp(cleanMessage, "i") }  // Partial match
+        });
+
+        console.log("User Input:", cleanMessage);
+        console.log("FAQ Found:", faq);
+
         if (faq) {
             faqResponse = faq.answer;
         } else {
@@ -50,7 +59,7 @@ router.post("/chat", async (req, res) => {
         // Send both responses back to the frontend
         res.json({ faqResponse, aiResponse });
     } catch (error) {
-        console.error("Error processing chatbot request:", error.message);
+        console.error("Error processing chatbot request:", error);
         res.status(500).json({ error: "Failed to process chatbot request." });
     }
 });
