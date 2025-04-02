@@ -109,10 +109,10 @@ const Chatbot = () => {
                                     p: 1,
                                     backgroundColor:
                                         msg.sender === "user"
-                                            ? "#FFF176" // Light Yellow
+                                            ? "#FFF176" 
                                             : msg.sender === "faq"
-                                            ? "#FFECB3" // Lighter Yellow
-                                            : "#FFF9C4", // Pale Yellow
+                                            ? "#FFECB3" 
+                                            : "#FFF9C4", 
                                     borderRadius: "8px",
                                     color: "black"
                                 }}
