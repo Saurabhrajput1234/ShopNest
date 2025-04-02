@@ -93,3 +93,19 @@ ShopNest is a full-stack marketplace application built using the MERN stack. It 
 ```sh
 git clone https://github.com/Saurabhrajput1234/ShopNest.git
 cd shopnest
+**Setup Backend:**
+```sh
+cd backend
+npm install
+npm start
+**Setup Frontend:**
+```sh
+cd frontend
+npm install
+npm start
+
+**Setup Docker:**
+Build and run the Docker containers:
+
+```sh
+docker-compose up --build
