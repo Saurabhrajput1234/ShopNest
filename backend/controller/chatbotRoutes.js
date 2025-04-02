@@ -4,9 +4,9 @@ const Chat = require("../model/Chat");
 const FAQ = require("../model/faq");
 
 const router = express.Router();
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
-console.log("GEMINI_API_KEY:", process.env.GEMINI_API_KEY);
+console.log("OPENROUTER_API_KEY:", OPENROUTER_API_KEY);
 
 // Route to handle chatbot interactions
 router.post("/chat", async (req, res) => {
@@ -25,15 +25,22 @@ router.post("/chat", async (req, res) => {
         if (faq) {
             faqResponse = faq.answer;
         } else {
-            // If no FAQ match, query the Gemini AI
+            // If no FAQ match, query the AI model via OpenRouter
             const response = await axios.post(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+                "https://openrouter.ai/api/v1/chat/completions",
                 {
-                    contents: [{ parts: [{ text: message }] }],
+                    model: "google/gemini-pro",
+                    messages: [{ role: "user", content: message }],
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+                        "Content-Type": "application/json",
+                    },
                 }
             );
 
-            aiResponse = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't understand that.";
+            aiResponse = response.data.choices?.[0]?.message?.content || "I'm sorry, I couldn't understand that.";
         }
 
         // Save the interaction to the database
