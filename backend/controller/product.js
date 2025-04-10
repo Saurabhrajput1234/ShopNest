@@ -7,9 +7,9 @@ const Order = require("../model/order");
 const Shop = require("../model/shop");
 const { upload } = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
-const cloudinary = require("cloudinary").v2; // Added Cloudinary
+const cloudinary = require("cloudinary").v2;
 
-// create product
+
 router.post(
   "/create-product",
   upload.array("images"),
@@ -21,7 +21,6 @@ router.post(
         return next(new ErrorHandler("Shop Id is invalid!", 400));
       } else {
         const files = req.files;
-        // Map each file to an object containing Cloudinary URL and public_id
         const imageUrls = files.map((file) => ({
           url: file.path,
           public_id: file.filename,
@@ -29,7 +28,7 @@ router.post(
 
         const productData = req.body;
         productData.images = imageUrls;
-        productData.shop = shop; // Alternatively, you might want to store shop._id
+        productData.shop = shop; 
 
         const product = await Product.create(productData);
 
@@ -44,7 +43,6 @@ router.post(
   })
 );
 
-// get all products of a shop
 router.get(
   "/get-all-products-shop/:id",
   catchAsyncErrors(async (req, res, next) => {
@@ -73,7 +71,6 @@ router.delete(
         return next(new ErrorHandler("Product not found!", 404));
       }
       
-      // Delete each image from Cloudinary using its public_id
       for (const image of productData.images) {
         await cloudinary.uploader.destroy(image.public_id);
       }
@@ -127,7 +124,6 @@ router.put(
         productId,
       };
 
-      // Use toString() to compare ObjectIDs
       const isReviewed = product.reviews.find(
         (rev) => rev.user._id.toString() === req.user._id.toString()
       );

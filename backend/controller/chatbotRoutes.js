@@ -29,7 +29,7 @@ const generatePrompt = (userMessage) => {
     `;
 };
 
-// Route to handle chatbot interactions
+
 router.post("/chat", async (req, res) => {
     const { message } = req.body;
 
@@ -44,9 +44,9 @@ router.post("/chat", async (req, res) => {
         // Trim and remove quotes for better matching
         const cleanMessage = message.trim().replace(/['"]+/g, "");
 
-        // Check for an FAQ match
+   
         const faq = await FAQ.findOne({ 
-            question: { $regex: new RegExp(cleanMessage, "i") }  // Case-insensitive search
+            question: { $regex: new RegExp(cleanMessage, "i") } 
         });
 
         console.log("User Input:", cleanMessage);
@@ -55,7 +55,7 @@ router.post("/chat", async (req, res) => {
         if (faq) {
             faqResponse = faq.answer;
         } else {
-            // If no FAQ match, query AI with ShopNest context
+            
             const aiPrompt = generatePrompt(message);
             
             const response = await axios.post(
@@ -79,7 +79,7 @@ router.post("/chat", async (req, res) => {
         const chat = new Chat({ userMessage: message, botResponse: faqResponse || aiResponse });
         await chat.save();
 
-        // Return the response to the frontend
+       
         res.json({ faqResponse, aiResponse });
     } catch (error) {
         console.error("Error processing chatbot request:", error);

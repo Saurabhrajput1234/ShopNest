@@ -6,7 +6,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const path = require("path");
+
 
 // config
 if (process.env.NODE_ENV !== "PRODUCTION") {
@@ -14,10 +14,9 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
     path: "config/.env",
   });
 }
-// connect db
+
 connectDatabase();
 
-// create server
 const server = app.listen(process.env.PORT || 8000, () => {
   console.log(`Server is running on http://localhost:${process.env.PORT}`);
 });
@@ -26,14 +25,11 @@ const server = app.listen(process.env.PORT || 8000, () => {
 
 app.use(express.json());
 app.use(cookieParser());
-// Enable CORS for all routes
+
 
 app.use(
   cors({
-    origin:[
-      "https://shopnest-fawn.vercel.app"
-    ],
-    
+    origin:["https://shopnest-fawn.vercel.app"],
     credentials: true,
   })
 );

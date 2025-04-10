@@ -130,7 +130,7 @@ router.put(
   catchAsyncErrors(async (req, res, next) => {
     try {
       const { user, rating, comment, eventId, orderId } = req.body;
-      // Find the event by its id (changed parameter to eventId for clarity)
+      
       const event = await Event.findById(eventId);
 
       const review = {

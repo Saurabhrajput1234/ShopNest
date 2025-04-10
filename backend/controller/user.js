@@ -19,7 +19,6 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
     const userEmail = await User.findOne({ email });
 
     if (userEmail) {
-      // If user already exists, delete the local uploaded file (if present)
       if (req.file && req.file.path) {
         fs.unlink(req.file.path, (err) => {
           if (err) {
@@ -48,7 +47,7 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
       email,
       password,
       avatar: result.secure_url,
-      avatarPublicId: result.public_id, // Store public_id for later deletion
+      avatarPublicId: result.public_id, 
     };
 
     const activationToken = createActivationToken(user);
@@ -75,8 +74,7 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
 
 // Create activation token for user account activation
 const createActivationToken = (user) => {
-  // why use create activatetoken?
-  // to create a token for the user to activate their account  after they register
+ 
   return jwt.sign(user, process.env.ACTIVATION_SECRET, {
     expiresIn: "5d",
   });
@@ -228,24 +226,21 @@ router.put(
     try {
       const existsUser = await User.findById(req.user.id);
 
-      // Remove previous avatar from Cloudinary if it exists
       if (existsUser.avatarPublicId) {
         await cloudinary.uploader.destroy(existsUser.avatarPublicId);
       }
 
-      // Upload new image to Cloudinary
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: "avatars",
       });
 
-      // Optionally remove the local file after upload
+     
       fs.unlink(req.file.path, (err) => {
         if (err) {
           console.log("Error deleting local file: ", err);
         }
       });
 
-      // Update user's avatar and public id
       existsUser.avatar = result.secure_url;
       existsUser.avatarPublicId = result.public_id;
       await existsUser.save();

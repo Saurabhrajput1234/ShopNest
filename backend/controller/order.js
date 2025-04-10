@@ -7,7 +7,7 @@ const Order = require("../model/order");
 const Shop = require("../model/shop");
 const Product = require("../model/product");
 
-// create new order
+
 router.post(
   "/create-order",
   catchAsyncErrors(async (req, res, next) => {
