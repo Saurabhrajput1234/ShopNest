@@ -6,7 +6,8 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit"); 
 
 // config
 if (process.env.NODE_ENV !== "PRODUCTION") {
@@ -15,47 +16,42 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   });
 }
 
+// Connect to DB
 connectDatabase();
 
-const server = app.listen(process.env.PORT || 8000, () => {
-  console.log(`Server is running on http://localhost:${process.env.PORT}`);
-});
+// Middleware setup
+app.use(helmet()); 
 
-// middlewares
+// Limit each IP to 100 requests per 15 mins
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Too many requests from this IP, please try again later.",
+});
+app.use(limiter);
 
 app.use(express.json());
 app.use(cookieParser());
 
-
 app.use(
   cors({
-    origin:["https://shopnest-fawn.vercel.app"],
+    origin: ["https://shopnest-fawn.vercel.app"],
     credentials: true,
   })
 );
 
 app.use("/", express.static("uploads"));
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
 app.get("/test", (req, res) => {
   res.send("Hello World!");
 });
 
-app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
-
-
-
-// config
-if (process.env.NODE_ENV !== "PRODUCTION") {
-  require("dotenv").config({
-    path: "config/.env",
-  });
-}
-
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// routes
+// Routes
 const user = require("./controller/user");
 const shop = require("./controller/shop");
 const product = require("./controller/product");
@@ -68,7 +64,7 @@ const conversation = require("./controller/conversation");
 const withdraw = require("./controller/withdraw");
 const chatbotRoutes = require("./controller/chatbotRoutes");
 
-// end points
+// Endpoints
 app.use("/api/v2/user", user);
 app.use("/api/v2/conversation", conversation);
 app.use("/api/v2/message", message);
@@ -81,19 +77,21 @@ app.use("/api/v2/payment", payment);
 app.use("/api/v2/withdraw", withdraw);
 app.use("/api/v2/chatbot", chatbotRoutes);
 
-
+// Error middleware
 app.use(ErrorHandler);
+
+// Start the server
+const server = app.listen(process.env.PORT || 8000, () => {
+  console.log(`Server is running on http://localhost:${process.env.PORT}`);
+});
 
 // Handling Uncaught Exceptions
 process.on("uncaughtException", (err) => {
   console.log(`Error: ${err.message}`);
-  console.log(`shutting down the server for handling UNCAUGHT EXCEPTION! 💥`);
+  console.log(`shutting down the server for handling UNCAUGHT EXCEPTION!`);
 });
 
-
-
-
-// unhandled promise rejection
+// Handling Unhandled Promise Rejections
 process.on("unhandledRejection", (err) => {
   console.log(`Shutting down the server for ${err.message}`);
   console.log(`shutting down the server for unhandle promise rejection`);
