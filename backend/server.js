@@ -16,10 +16,9 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   });
 }
 
-// Connect to DB
+
 connectDatabase();
 
-// Middleware setup
 app.use(helmet()); 
 
 // Limit each IP to 100 requests per 15 mins
