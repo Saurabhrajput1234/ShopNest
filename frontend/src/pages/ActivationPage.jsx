@@ -18,10 +18,10 @@ const ActivationPage = () => {
           });
           console.log(res.data.message);
 
-          // Wait a bit before navigating
+       
           setTimeout(() => {
-            navigate("/login"); // Redirect to login page
-          }, 2000); // 2 seconds delay for showing success message
+            navigate("/login"); 
+          }, 2000); 
 
         } catch (err) {
           console.log(err.response.data.message);
