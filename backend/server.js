@@ -39,6 +39,13 @@ app.use(
   })
 );
 
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     callback(null, true); // Allow any origin
+//   },
+//   credentials: true, // Allow cookies
+// }));
+
 app.use("/", express.static("uploads"));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 

@@ -4,11 +4,13 @@ import axios from "axios";
 
 const server = process.env.REACT_APP_ENDPOINT_API;
 
-const navigate = useNavigate();
 
 const SellerActivationPage = () => {
   const { activation_token } = useParams();
   const [error, setError] = useState(false);
+
+  
+const navigate = useNavigate();
 
   useEffect(() => {
     const activationEmail = async () => {
