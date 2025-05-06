@@ -21,7 +21,7 @@ const navigate = useNavigate();
         // Wait a bit before navigating
         setTimeout(() => {
           navigate("/shop-login"); // Redirect to login page
-        }, 2000);
+        }, 3000);
       } catch (err) {
         console.error(err.response?.data?.message || "Activation failed");
         setError(true);

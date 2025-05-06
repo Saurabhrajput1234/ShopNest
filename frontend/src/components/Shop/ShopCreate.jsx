@@ -25,12 +25,11 @@ const ShopCreate = () => {
         e.preventDefault();
 
         const config = { headers: { "Content-Type": "multipart/form-data" } };
-        // meaning of uper line is that we are creating a new object with the name of config and the value of config is {headers:{'Content-Type':'multipart/form-data'}}  
+      
 
         const newForm = new FormData();
-        // meaning of uper line is that we are creating a new form data object and we are sending it to the backend with the name of newForm and the value of newForm is new FormData()
+       
         newForm.append("file", avatar);
-        // meanin of newForm.append("file",avatar) is that we are sending a file to the backend with the name of file and the value of the file is avatar
         newForm.append("name", name);
         newForm.append("email", email);
         newForm.append("password", password);
