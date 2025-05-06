@@ -29,7 +29,7 @@ const navigate = useNavigate();
     };
 
     activationEmail();
-  }, [activation_token]); // Added dependency
+  }, [activation_token,navigate]); // Added dependency
 
   return (
     <div
