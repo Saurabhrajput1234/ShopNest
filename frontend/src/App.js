@@ -64,7 +64,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import Chatbot from "./components/Chatbot/Chatbot";
 
-
+//r
 
 
 const server = process.env.REACT_APP_ENDPOINT_API;
